@@ -1,24 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import io from 'socket.io-client';
 
-const socket = io(`${process.env.NEXT_PUBLIC_API_URL}`);
+const socketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
-export const useSocket = () => {
-  const [notifications, setNotifications] = useState<string[]>([]);
+if (!socketURL) {
+  throw new Error('A URL do WebSocket não está definida no arquivo .env');
+}
 
+const socket = io(socketURL);
+
+const useSocket = () => {
   useEffect(() => {
-    socket.on('notification', (message: string) => {
-      setNotifications((prev) => [...prev, message]);
-    });
-
     return () => {
-      socket.off('notification');
+      socket.disconnect();
     };
   }, []);
 
-  const sendNotification = (message: string) => {
-    socket.emit('sendNotification', message);
-  };
-
-  return { notifications, sendNotification };
+  return socket;
 };
+
+export default useSocket;

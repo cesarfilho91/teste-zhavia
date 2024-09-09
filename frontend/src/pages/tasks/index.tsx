@@ -5,6 +5,8 @@ import { useAuth } from '../../context/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CreateTaskModal from './CreateTaskModal';
 import socket from '../../utils/websocket';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Importar CSS do react-toastify
 
 interface Task {
   id: string;
@@ -35,14 +37,15 @@ export default function Tasks() {
 
       switch (message.type) {
         case 'TASK_UPDATED':
-          fetchTasks(); 
+          fetchTasks();
+          toast.info(`Tarefa atualizada: ${message.data.title}`);
           break;
         case 'NEW_TASK':
-          alert(`Nova tarefa criada: ${message.data.title}`);
+          toast.success(`Nova tarefa criada: ${message.data.title}`);
           fetchTasks();
           break;
         case 'TASK_DELETED':
-          alert(`Tarefa excluída: ${message.data.title}`);
+          toast.error(`Tarefa excluída: ${message.data.title}`);
           fetchTasks();
           break;
         default:
@@ -51,7 +54,7 @@ export default function Tasks() {
     };
 
     return () => {
-      socket.close(); 
+      socket.close();
     };
   }, []);
 
@@ -185,6 +188,7 @@ export default function Tasks() {
 
         {showModal && <CreateTaskModal onClose={closeModal} onTaskCreated={fetchTasks} />}
       </div>
+      <ToastContainer /> 
     </>
   );
 }

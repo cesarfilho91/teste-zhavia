@@ -36,8 +36,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('token', token);
       setIsAuthenticated(true);
       router.push('/tasks');
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Erro desconhecido');
+      }
       setIsAuthenticated(false);
       console.error('Login failed:', err);
     }
