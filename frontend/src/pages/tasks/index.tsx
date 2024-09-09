@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import CreateTaskModal from './CreateTaskModal';
 import socket from '../../utils/websocket';
 import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Importar CSS do react-toastify
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Task {
   id: string;
