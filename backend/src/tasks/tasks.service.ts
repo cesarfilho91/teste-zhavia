@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Task } from './entities/task.entity';
 import { LogsService } from '../logs/logs.service';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { LogsModule } from '../logs/logs.module';
 
 @Injectable()
 export class TasksService {
