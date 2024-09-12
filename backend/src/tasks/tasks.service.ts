@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from './entities/task.entity';
@@ -45,6 +45,15 @@ export class TasksService {
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
+    const task = await this.taskRepository.findOneBy({id});
+    if(!task){
+      throw new NotFoundException('${id}');
+    }
+
+    if(updateTaskDto.status!==undefined && updateTaskDto.status.trim()===''){
+      throw new BadRequestException('Status Vazio')
+    }
+
     await this.taskRepository.update(id, updateTaskDto);
 
     const updatedTask = await this.findOne(id);
