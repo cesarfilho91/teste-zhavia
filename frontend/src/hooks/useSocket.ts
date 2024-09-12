@@ -26,7 +26,15 @@ const useSocket = () => {
     return { socket: null, loading: true };
   }
 
-  return { socket, loading: false };
+  const loginUser = (userId: string) => {
+    socket.emit('userLogin', { userId });
+  };
+
+  const logoutUser = (userId: string) => {
+    socket.emit('userLogout', { userId });
+  };
+
+  return { socket, loading: false, loginUser, logoutUser };
 };
 
 export default useSocket;

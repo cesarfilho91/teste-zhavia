@@ -1,24 +1,40 @@
-import { WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { 
+  WebSocketGateway,
+  WebSocketServer,
+  SubscribeMessage,
+  OnGatewayConnection,
+  OnGatewayDisconnect
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({ namespace: 'notifications' })
-export class NotificationGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  afterInit(server: Server) {
-    //console.log('WebSocket server initialized');
+  private onlineUsers: Set<string> = new Set();
+
+  handleConnection(client: Socket): void {
+    //console.log(`Cliente conectado: ${client.id}`);
   }
 
-  handleConnection(client: any, ...args: any[]) {
-    //console.log('Client connected:', client.id);
+  handleDisconnect(client: Socket): void {
+    //console.log(`Cliente desconectado: ${client.id}`);
   }
 
-  handleDisconnect(client: any) {
-    //console.log('Client disconnected:', client.id);
+  @SubscribeMessage('userLogin')
+  handleUserLogin(client: Socket, payload: { userId: string }): void {
+    this.onlineUsers.add(payload.userId);
+    this.broadcastOnlineUsers();
   }
 
-  notifyAll(type: string, data: any) {
-    this.server.emit('notification', { type, data });
+  @SubscribeMessage('userLogout')
+  handleUserLogout(client: Socket, payload: { userId: string }): void {
+    this.onlineUsers.delete(payload.userId);
+    this.broadcastOnlineUsers();
+  }
+
+  broadcastOnlineUsers() {
+    this.server.emit('onlineUsers', Array.from(this.onlineUsers));
   }
 }

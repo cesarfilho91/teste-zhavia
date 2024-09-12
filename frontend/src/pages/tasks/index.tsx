@@ -7,6 +7,7 @@ import CreateTaskModal from './CreateTaskModal';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
 import useSocket from '../../hooks/useSocket';
+import OnlineUsersList from '../../components/OnlineUsersList';
 
 interface Task {
   id: string;
@@ -21,7 +22,9 @@ export default function Tasks() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
-  const { socket, loading } = useSocket(); 
+  const { socket, loading, loginUser, logoutUser } = useSocket();
+  const { user } = useAuth();
+  const userEmail = user?.email || '';
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -33,7 +36,7 @@ export default function Tasks() {
 
   useEffect(() => {
     if (loading || !socket) return;
-  
+
     socket.on('notification', (message: { type: string; data: Task }) => {
       switch (message.type) {
         case 'NEW_TASK':
@@ -54,11 +57,23 @@ export default function Tasks() {
           console.warn('Tipo de mensagem desconhecido:', message.type);
       }
     });
-  
+
     return () => {
       socket.off('notification');
     };
-  }, [socket, loading]);  
+  }, [socket, loading]);
+
+  useEffect(() => {
+    if (loginUser) {
+      loginUser(userEmail);
+    }
+
+    return () => {
+      if (logoutUser) {
+        logoutUser(userEmail);
+      }
+    };
+  }, [loginUser, logoutUser, userEmail]);
 
   async function fetchTasks() {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks`);
@@ -131,6 +146,7 @@ export default function Tasks() {
         <button className="btn btn-primary mb-3" onClick={openModal}>
           Criar Nova Tarefa
         </button>
+
         <table className="table table-striped">
           <thead>
             <tr>
@@ -189,10 +205,12 @@ export default function Tasks() {
             ))}
           </tbody>
         </table>
+        
+        <OnlineUsersList />
+        
       </div>
 
       <CreateTaskModal show={showModal} handleClose={closeModal} fetchTasks={fetchTasks} />
-      
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
     </>
   );
