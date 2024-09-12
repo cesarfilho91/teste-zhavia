@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { LogsModule } from '../logs/logs.module';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
       signOptions: { expiresIn: '60m' },
     }),
     LogsModule,
+    NotificationModule,
   ],
   providers: [AuthService, JwtAuthGuard],
   controllers: [AuthController],

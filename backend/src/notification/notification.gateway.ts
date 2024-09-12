@@ -1,24 +1,24 @@
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, MessageBody } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 
-@WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
-})
-export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server;
+@WebSocketGateway({ namespace: 'notifications' })
+export class NotificationGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  server: Server;
 
-  handleConnection(client: Socket) {
-    console.log('Client connected:', client.id);
+  afterInit(server: Server) {
+    //console.log('WebSocket server initialized');
   }
 
-  handleDisconnect(client: Socket) {
-    console.log('Client disconnected:', client.id);
+  handleConnection(client: any, ...args: any[]) {
+    //console.log('Client connected:', client.id);
   }
 
-  @SubscribeMessage('sendNotification')
-  handleMessage(@MessageBody() message: string): void {
-    this.server.emit('notification', message);
+  handleDisconnect(client: any) {
+    //console.log('Client disconnected:', client.id);
+  }
+
+  notifyAll(type: string, data: any) {
+    this.server.emit('notification', { type, data });
   }
 }

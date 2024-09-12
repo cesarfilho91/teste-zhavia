@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CreateTaskModal from './CreateTaskModal';
-import socket from '../../utils/websocket';
-import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
+import useSocket from '../../hooks/useSocket';
 
 interface Task {
   id: string;
@@ -21,6 +21,7 @@ export default function Tasks() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
+  const { socket, loading } = useSocket(); 
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -31,32 +32,33 @@ export default function Tasks() {
   }, [isAuthenticated, router]);
 
   useEffect(() => {
-    socket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log('Notificação Recebida:', message);
-
+    if (loading || !socket) return;
+  
+    socket.on('notification', (message: { type: string; data: Task }) => {
       switch (message.type) {
-        case 'TASK_UPDATED':
-          fetchTasks();
-          toast.info(`Tarefa atualizada: ${message.data.title}`);
-          break;
         case 'NEW_TASK':
           toast.success(`Nova tarefa criada: ${message.data.title}`);
-          fetchTasks();
+          setTasks((prevTasks) => [...prevTasks, message.data]);
+          break;
+        case 'TASK_UPDATED':
+          toast.info(`Tarefa atualizada: ${message.data.title}`);
+          setTasks((prevTasks) =>
+            prevTasks.map((task) => (task.id === message.data.id ? message.data : task))
+          );
           break;
         case 'TASK_DELETED':
           toast.error(`Tarefa excluída: ${message.data.title}`);
-          fetchTasks();
+          setTasks((prevTasks) => prevTasks.filter((task) => task.id !== message.data.id));
           break;
         default:
           console.warn('Tipo de mensagem desconhecido:', message.type);
       }
-    };
-
+    });
+  
     return () => {
-      socket.close();
+      socket.off('notification');
     };
-  }, []);
+  }, [socket, loading]);  
 
   async function fetchTasks() {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks`);
@@ -136,7 +138,7 @@ export default function Tasks() {
               <th scope="col">Título</th>
               <th scope="col">Descrição</th>
               <th scope="col">Status</th>
-              <th scope="col">Ações</th>
+              <th scope="col" colSpan={2}>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -177,6 +179,8 @@ export default function Tasks() {
                       Editar
                     </button>
                   )}
+                </td>
+                <td>
                   <button className="btn btn-danger ms-2" onClick={() => handleDelete(task.id)}>
                     Excluir
                   </button>
@@ -185,10 +189,11 @@ export default function Tasks() {
             ))}
           </tbody>
         </table>
-
-        {showModal && <CreateTaskModal onClose={closeModal} onTaskCreated={fetchTasks} />}
       </div>
-      <ToastContainer /> 
+
+      <CreateTaskModal show={showModal} handleClose={closeModal} fetchTasks={fetchTasks} />
+      
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
     </>
   );
 }
