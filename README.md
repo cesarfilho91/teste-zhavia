@@ -51,7 +51,65 @@ O **Sistema de Gerenciamento de Tarefas para Equipes** tem como objetivo facilit
 5. **Atualização da Interface:**
    - A interface do frontend é atualizada com base nas informações recebidas do backend e nas ações do usuário.
 
-## 4. Fluxograma
+## 4. Libs do Frontend e Backend
+
+### Frontend
+- **React:** Utilizado para construir componentes da interface.
+- **axios:** Usado para fazer requisições HTTP para o backend.
+- **zustand:** Gerencia o estado global da aplicação.
+- **socket.io-client:** Facilita a comunicação em tempo real com o backend.
+
+### Backend
+- **TypeORM:** ORM utilizado para operações com o banco de dados PostgreSQL.
+- **Mongoose:** Utilizado para operações com o banco de dados MongoDB.
+- **bcrypt:** Biblioteca para hashing de senhas.
+- **passport-jwt:** Implementa a estratégia de autenticação JWT.
+- **socket.io:** Facilita a comunicação em tempo real com o frontend.
+
+## 5. Controladores
+
+### Frontend
+- **`/pages/index.tsx`**: Página inicial que exibe a lista de tarefas e permite interações básicas.
+- **`/pages/login.tsx`**: Página de login, onde os usuários inserem suas credenciais para autenticação.
+- **`/pages/register.tsx`**: Página de registro para novos usuários.
+
+### Backend
+- **`auth.controller.ts`**: Gerencia as rotas de autenticação, incluindo login e registro de usuários.
+- **`tasks.controller.ts`**: Gerencia as rotas relacionadas às tarefas, incluindo criação, leitura, atualização e exclusão de tarefas.
+- **`users.controller.ts`**: Gerencia as rotas relacionadas a usuários, incluindo consulta e atualização de informações do usuário.
+
+## 6. Explicação dos Códigos
+
+### Frontend
+
+- **`/pages/index.tsx`**
+  - **Funcionalidade:** Exibe a lista de tarefas e permite aos usuários interagir com elas.
+  - **Funcionamento:** Utiliza `axios` para buscar as tarefas do backend e `zustand` para gerenciar o estado global das tarefas.
+
+- **`/pages/login.tsx`**
+  - **Funcionalidade:** Permite aos usuários se autenticarem.
+  - **Funcionamento:** Envia as credenciais para o backend usando `axios` e armazena o token JWT retornado no armazenamento local.
+
+- **`/pages/register.tsx`**
+  - **Funcionalidade:** Permite aos novos usuários se registrarem.
+  - **Funcionamento:** Envia os dados do usuário para o backend usando `axios`.
+
+### Backend
+
+- **`auth.controller.ts`**
+  - **Funcionalidade:** Fornece endpoints para autenticação.
+  - **Funcionamento:** Utiliza o `auth.service.ts` para processar login e registro, e `JwtService` para gerar e validar tokens JWT.
+
+- **`tasks.controller.ts`**
+  - **Funcionalidade:** Fornece endpoints para gerenciamento de tarefas.
+  - **Funcionamento:** Usa o `tasks.service.ts` para manipular tarefas e interagir com o banco de dados.
+
+- **`users.controller.ts`**
+  - **Funcionalidade:** Fornece endpoints para manipulação de usuários.
+  - **Funcionamento:** Usa o `users.service.ts` para buscar e atualizar informações do usuário.
+
+  
+## 7. Fluxograma
 
 ```plaintext
 +------------------+
@@ -80,53 +138,3 @@ O **Sistema de Gerenciamento de Tarefas para Equipes** tem como objetivo facilit
 | Atualização da   |
 | Interface        |
 +------------------+
-
-## 5. Libs do Frontend e Backend
-
-### Frontend
-**React:** Utilizado para construir componentes da interface.
-**axios:** Usado para fazer requisições HTTP para o backend.
-**zustand:** Gerencia o estado global da aplicação.
-**socket.io-client:** Facilita a comunicação em tempo real com o backend.
-
-### Backend
-**TypeORM:** ORM utilizado para operações com o banco de dados PostgreSQL.
-**Mongoose:** Utilizado para operações com o banco de dados MongoDB.
-**bcrypt:** Para hashing de senhas.
-**passport-jwt:** Implementa a estratégia de autenticação JWT.
-**socket.io:** Facilita a comunicação em tempo real com o frontend.
-
-## 6. Controladores
-### Frontend
-**/pages/index.tsx:** Página inicial que exibe a lista de tarefas e permite interações básicas.
-**/pages/login.tsx:** Página de login, onde os usuários inserem suas credenciais para autenticação.
-**/pages/register.tsx:** Página de registro para novos usuários.
-
-### Backend
-**auth.controller.ts:** Gerencia as rotas de autenticação, incluindo login e registro de usuários.
-**tasks.controller.ts:** Gerencia as rotas relacionadas às tarefas, incluindo criação, leitura, atualização e exclusão de tarefas.
-**users.controller.ts:** Gerencia as rotas relacionadas a usuários, incluindo consulta e atualização de informações do usuário.
-
-## 7. Explicação dos Códigos
-
-### Frontend
-**/pages/index.tsx:**
-- Funcionalidade: Exibe a lista de tarefas e permite aos usuários interagir com elas.
-- Funcionamento: Usa o axios para buscar as tarefas do backend e zustand para gerenciar o estado global das tarefas.
-**/pages/login.tsx:**
-- Funcionalidade: Permite aos usuários se autenticarem.
-- Funcionamento: Envia as credenciais para o backend usando axios e armazena o token JWT retornado no armazenamento local.
-**/pages/register.tsx:**
-- Funcionalidade: Permite aos novos usuários se registrarem.
-- Funcionamento: Envia os dados do usuário para o backend usando axios.
-
-### Backend
-**auth.controller.ts:**
-- Funcionalidade: Fornece endpoints para autenticação.
-- Funcionamento: Utiliza o auth.service.ts para processar login e registro, e JwtService para gerar e validar tokens JWT.
-**tasks.controller.ts:**
-- Funcionalidade: Fornece endpoints para gerenciamento de tarefas.
-- Funcionamento: Usa o tasks.service.ts para manipular tarefas e interagir com o banco de dados.
-users.controller.ts:
-- Funcionalidade: Fornece endpoints para manipulação de usuários.
-- Funcionamento: Usa o users.service.ts para buscar e atualizar informações do usuário.
