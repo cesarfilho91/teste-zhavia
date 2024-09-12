@@ -69,9 +69,9 @@ O **Sistema de Gerenciamento de Tarefas para Equipes** tem como objetivo facilit
 ## 5. Controladores
 
 ### Frontend
-- **`/pages/index.tsx`**: Página inicial que exibe a lista de tarefas e permite interações básicas.
-- **`/pages/login.tsx`**: Página de login, onde os usuários inserem suas credenciais para autenticação.
-- **`/pages/register.tsx`**: Página de registro para novos usuários.
+- **`/pages/tasks/index.tsx`**: Página inicial que exibe a lista de tarefas e permite interações básicas.
+- **`/pages/login/index.tsx`**: Página de login, onde os usuários inserem suas credenciais para autenticação.
+- **`/pages/register/index.tsx`**: Página de registro para novos usuários.
 
 ### Backend
 - **`auth.controller.ts`**: Gerencia as rotas de autenticação, incluindo login e registro de usuários.
@@ -82,15 +82,15 @@ O **Sistema de Gerenciamento de Tarefas para Equipes** tem como objetivo facilit
 
 ### Frontend
 
-- **`/pages/index.tsx`**
+- **`/pages/tasks/index.tsx`**
   - **Funcionalidade:** Exibe a lista de tarefas e permite aos usuários interagir com elas.
   - **Funcionamento:** Utiliza `axios` para buscar as tarefas do backend e `zustand` para gerenciar o estado global das tarefas.
 
-- **`/pages/login.tsx`**
+- **`/pages/login/index.tsx`**
   - **Funcionalidade:** Permite aos usuários se autenticarem.
   - **Funcionamento:** Envia as credenciais para o backend usando `axios` e armazena o token JWT retornado no armazenamento local.
 
-- **`/pages/register.tsx`**
+- **`/pages/register/index.tsx`**
   - **Funcionalidade:** Permite aos novos usuários se registrarem.
   - **Funcionamento:** Envia os dados do usuário para o backend usando `axios`.
 
